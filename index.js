@@ -169,7 +169,7 @@ async function uploadFileBase64(){
             delete param.message
             delete param.content
             delete param.sha
-            core.setOutput("success", message)
+            core.setOutput("success", param.message)
             
         })
     }catch(error){
