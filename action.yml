@@ -1,0 +1,15 @@
+name: 'generate changelog'
+description: 'This action generate a changelog'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  path:
+    description: 'package.json path'
+    required: false
+outputs:
+  success:
+    description: 'the result will be printed here'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
