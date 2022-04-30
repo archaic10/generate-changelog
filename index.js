@@ -69,7 +69,7 @@ async function setVersion(newVersion){
     let download_url = content != 404 ? content.data.download_url : null
     if (download_url != null){
         let {data} = await getContentFile(download_url)
-        modifyVersionAndUploadFile(data, sha, newVersion)
+        await modifyVersionAndUploadFile(data, sha, newVersion)
     }else{
         core.setFailed('Path invalido!')
     }
@@ -117,11 +117,15 @@ async function getContentFile (raw_url){
     }
 }
 
-function modifyVersionAndUploadFile(data, sha, newVersion){
+async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
         if(modifyVersion(data, newVersion) && modifyVersion(data, newVersion) != ''){
-            let newFile = modifyVersion(data, newVersion)
-            let fileBase64 = base64.encode(JSON.stringify(newFile))
+            newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
+            await exec(`git config user.email ${github.context.payload.commits[0].author.email}`)
+            await exec(`git config user.name ${github.context.payload.commits[0].author.name}`)
+            await exec(`npm version ${newVersion}`)
+            let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
+            let fileBase64 = base64.encode(fileRead)
             uploadGithub(fileBase64, path, sha)
         }else{
             core.setFailed('Failed to update package.json version!')
