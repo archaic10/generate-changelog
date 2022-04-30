@@ -13349,8 +13349,8 @@ async function run(){
     if(githubToken){
         let newVersion = await getTag()
             if(newVersion){
-                setVersion(newVersion)
-                await generateChangelog()
+                // setVersion(newVersion)
+                await generateChangelog(newVersion)
                 let fileRead = fs.readFileSync(`./CHANGELOG.md`, 'utf8').toString()
                 let fileBase64 = base64.encode(fileRead)
                 path = 'CHANGELOG.md'
@@ -13395,7 +13395,6 @@ async function findTag(){
 }
 
 async function setVersion(newVersion){
-    
     let content = await getContent()
     let sha = content != 404 ? content.data.sha : null
     let download_url = content != 404 ? content.data.download_url : null
@@ -13508,7 +13507,8 @@ async function uploadFileBase64(){
     }
 }
 
-async function generateChangelog(){
+async function generateChangelog(newVersion){
+    await exec(`npm version ${newVersion}`)
     await exec('yarn install ')
     await exec('yarn add auto-changelog --dev')
     await exec('yarn auto-changelog -p')
