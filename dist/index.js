@@ -13349,7 +13349,7 @@ async function run(){
     if(githubToken){
         let newVersion = await getTag()
             if(newVersion){
-                setVersion(newVersion)
+                await setVersion(newVersion)
                 await generateChangelog()
                 let fileRead = fs.readFileSync(`./CHANGELOG.md`, 'utf8').toString()
                 let fileBase64 = base64.encode(fileRead)
