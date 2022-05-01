@@ -69,7 +69,7 @@ async function setVersion(newVersion){
     let download_url = content != 404 ? content.data.download_url : null
     if (download_url != null){
         let {data} = await getContentFile(download_url)
-        modifyVersionAndUploadFile(data, sha, newVersion)
+        await modifyVersionAndUploadFile(data, sha, newVersion)
     }else{
         core.setFailed('Path invalido!')
     }
@@ -117,23 +117,21 @@ async function getContentFile (raw_url){
     }
 }
 
-function modifyVersionAndUploadFile(data, sha, newVersion){
+async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
-        if(modifyVersion(data, newVersion) && modifyVersion(data, newVersion) != ''){
-            let newFile = modifyVersion(data, newVersion)
-            let fileBase64 = base64.encode(JSON.stringify(newFile))
+        try{
+            await exec("yarn install")
+            let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
+            let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
+            fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
+            let fileBase64 = base64.encode(fileRead)
             uploadGithub(fileBase64, path, sha)
-        }else{
+        }catch{
             core.setFailed('Failed to update package.json version!')
         }
     }else{
         core.setFailed('Failed to read file!')
     }
-}
-
-function modifyVersion (package_json_obj, newVersion){
-    package_json_obj.version = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
-    return package_json_obj
 }
 
 async function uploadGithub(content, fileName, sha){
@@ -177,7 +175,6 @@ async function uploadFileBase64(){
 }
 
 async function generateChangelog(){
-    await exec('yarn install ')
     await exec('yarn add auto-changelog --dev')
     await exec('yarn auto-changelog -p')
 }
