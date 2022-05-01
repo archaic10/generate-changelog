@@ -1,6 +1,6 @@
 {
   "name": "generate-changelog",
-  "version": "1.3.0",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,5 @@
     "axios": "^0.26.1",
     "base-64": "^1.0.0",
     "fs": "^0.0.1-security"
-  },
-  "devDependencies": {
-    "auto-changelog": "^2.4.0"
   }
 }

@@ -6,7 +6,7 @@ This action looks for the recently released version of the repository tag and ch
 - v1.0.0
 - 1.0.0
 
-This action too changes the package.json file version of the default branch.
+This action too changes the package.json file version of the default branch and generate changelog.
 
 ### Example
 
