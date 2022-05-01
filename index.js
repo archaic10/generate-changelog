@@ -18,7 +18,7 @@ async function run(){
     if(githubToken){
         let newVersion = await getTag()
             if(newVersion){
-                await setVersion(newVersion)
+                setVersion(newVersion)
                 await generateChangelog()
                 let fileRead = fs.readFileSync(`./CHANGELOG.md`, 'utf8').toString()
                 let fileBase64 = base64.encode(fileRead)
@@ -123,6 +123,7 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             await exec("yarn install")
             let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
+            newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
             fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
             let fileBase64 = base64.encode(fileRead)
             await uploadGithub(fileBase64, path, sha)
