@@ -13456,7 +13456,7 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
             let fileBase64 = base64.encode(fileRead)
-            uploadGithub(fileBase64, path, sha)
+            await uploadGithub(fileBase64, path, sha)
         }catch{
             core.setFailed('Failed to update package.json version!')
         }
