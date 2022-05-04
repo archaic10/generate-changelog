@@ -120,7 +120,8 @@ async function getContentFile (raw_url){
 async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
         try{
-            await exec("npm install")
+            await exec("yarn cache clean")
+            await exec("yarn install")
             let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
