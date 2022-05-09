@@ -124,8 +124,9 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             if(path.split('/').length > 1){
                 console.log('with dir')
                 let dir = path.replace("package.json", "")
+                await exec(`ls`)
                 await exec(`cd ${dir}`)
-                await exec("yarn install")
+                await exec("yarn install -W")
             }else{
                 console.log('without dir')
                 await exec("yarn install")
