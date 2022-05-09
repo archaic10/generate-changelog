@@ -13483,7 +13483,7 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             // }
             
             console.log('show path: ',path)
-            let fileRead = fs.readFileSync(path, 'utf8').toString()
+            let fileRead = fs.readFileSync(`.${path}`, 'utf8').toString()
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
             fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
