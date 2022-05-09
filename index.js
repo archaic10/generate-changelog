@@ -126,10 +126,10 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
                 let dir = path.replace("package.json", "")
                 await exec(`ls`)
                 await exec(`cd ${dir}`)
-                await exec("npm install ")
+                await exec("yarn install -W")
             }else{
                 console.log('without dir')
-                await exec("npm install")
+                await exec("yarn install")
             }
             
 
