@@ -13528,7 +13528,7 @@ async function uploadFileBase64(){
 }
 
 async function generateChangelog(){
-    await exec('yarn add auto-changelog --dev')
+    await exec('yarn add auto-changelog --dev --ignore-workspace-root-check')
     await exec('yarn auto-changelog -p')
 }
 
