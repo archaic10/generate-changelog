@@ -13378,7 +13378,7 @@ async function run(){
                 uploadGithub(fileBase64, `CHANGELOG.md`, sha)
             }
     }else{
-        core.setFailed('The github-token parameter is required!')
+        core.setFailed('O github-token é um parâmetro obrigatório!')
     }
 }
 
@@ -13387,15 +13387,16 @@ async function getTag(){
         let numberTag = await findTag()
         if(numberTag.status == 200){
             let lastTag = numberTag.data.pop().ref.split('/').pop()
-            console.log('The tag found is', lastTag)
+            console.log('A tag encontrada é', lastTag)
             if(!validateTag(lastTag)){
-                console.log(`The tag ${lastTag} is not a valid tag!`)
+                core.setFailed(`A tag ${lastTag} não é uma tag válida!`)
+                return false
             }else{
                 return lastTag
             }            
         }
     }catch(error){
-        core.setFailed("No tags have been defined for your project. Set a tag and run the action again!", error)
+        core.setFailed("Não existem tags definidas para esse repositório. crie uma tag e execute a action novamante!", error)
         return false
     }
 }
@@ -13421,7 +13422,7 @@ async function setVersion(newVersion){
         let {data} = await getContentFile(download_url)
         await modifyVersionAndUploadFile(data, sha, newVersion)
     }else{
-        core.setFailed('Path invalido!')
+        core.setFailed('Path inválido!')
     }
 }
 
@@ -13463,15 +13464,24 @@ async function getContentFile (raw_url){
             }
         })
     }catch(error){
-        core.setFailed('Error getting file content!')
+        core.setFailed('Erro ao carregar o conteúdo do arquivo!')
     }
 }
 
 async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
         try{
-            await exec("yarn cache clean")
-            await exec("yarn install")
+            if(path.split('/').length > 1){
+                console.log('with dir')
+                let dir = path.replace("package.json", "")
+                await exec(`cd ${dir}`)
+                await exec("yarn install")
+            }else{
+                console.log('without dir')
+                await exec("yarn install")
+            }
+            
+
             let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
@@ -13479,10 +13489,10 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             let fileBase64 = base64.encode(fileRead)
             await uploadGithub(fileBase64, path, sha)
         }catch{
-            core.setFailed('Failed to update package.json version!')
+            core.setFailed('Falha ao atualizar a versão do package.json!')
         }
     }else{
-        core.setFailed('Failed to read file!')
+        core.setFailed('Falha ao tentar ler arquivo!')
     }
 }
 
@@ -13522,7 +13532,7 @@ async function uploadFileBase64(){
             
         })
     }catch(error){
-        core.setFailed("Error ao commitar file: ",error)
+        core.setFailed("Erro ao salvar arquivo: ",error)
     }
 }
 
