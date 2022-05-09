@@ -121,29 +121,20 @@ async function getContentFile (raw_url){
 async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
         try{
-            if(path.split('/').length > 1){
-                console.log('with dir')
-                let dir = path.replace("package.json", "")
-                await exec(`ls`)
-                await exec(`cd ${dir}`)
-            }else{
-                console.log('without dir')
-            }
-            console.log('after ...')
-            await exec(`ls`)
-            console.log('show path', path)
-            let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
-            let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
-            newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
-            fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
-            let fileBase64 = base64.encode(fileRead)
-            await uploadGithub(fileBase64, path, sha)
+            let newFile = modifyVersion(data, newVersion)
+            let fileBase64 = base64.encode(JSON.stringify(newFile))
+            uploadGithub(fileBase64, path, sha)
         }catch{
             core.setFailed('Falha ao atualizar a versão do package.json!')
         }
     }else{
         core.setFailed('Falha ao tentar ler arquivo!')
     }
+}
+
+function modifyVersion (package_json_obj, newVersion){
+    package_json_obj.version = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
+    return package_json_obj
 }
 
 async function uploadGithub(content, fileName, sha){
