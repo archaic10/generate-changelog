@@ -13471,19 +13471,19 @@ async function getContentFile (raw_url){
 async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
         try{
-            if(path.split('/').length > 1){
-                console.log('with dir')
-                let dir = path.replace("package.json", "")
-                await exec(`ls`)
-                await exec(`cd ${dir}`)
-                await exec("yarn install -W")
-            }else{
-                console.log('without dir')
-                await exec("yarn install")
-            }
+            // if(path.split('/').length > 1){
+            //     console.log('with dir')
+            //     let dir = path.replace("package.json", "")
+            //     await exec(`ls`)
+            //     await exec(`cd ${dir}`)
+            //     await exec("yarn install -W")
+            // }else{
+            //     console.log('without dir')
+            //     await exec("yarn install")
+            // }
             
-
-            let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
+            console.log('show path: ',path)
+            let fileRead = fs.readFileSync(path, 'utf8').toString()
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
             fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
