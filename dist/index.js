@@ -13473,13 +13473,18 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             await exec("yarn cache clean")
             await exec("yarn install --ignore-workspace-root-check")
             let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
+            console.log("modifyVersionAndUploadFile fileRead:", fileRead)
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
+            console.log("modifyVersionAndUploadFile newVersion:", newVersion)
             fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
+            console.log("modifyVersionAndUploadFile fileRead:", fileRead)
             let fileBase64 = base64.encode(fileRead)
+            console.log("modifyVersionAndUploadFile fileBase64:", fileBase64)
+            console.log("modifyVersionAndUploadFile path:", path)
             await uploadGithub(fileBase64, path, sha)
         }catch(error){
-            core.setFailed('Failed to update package.json version!',error)
+            console.log('Failed to update package.json version!',error)
         }
     }else{
         core.setFailed('Failed to read file!')
