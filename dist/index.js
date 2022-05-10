@@ -13477,7 +13477,10 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             let fileRead =  ''
             if(path.split('/').length >1){
                 console.log('with directory')
-                fileRead = fs.readFileSync(path, 'utf8').toString()
+                if (path.split('/')[0]== ''){
+                    let dir = path.slice(0, -1)
+                    fileRead = fs.readFileSync(dir, 'utf8').toString()
+                }
                 console.log('object with directory: ',fileRead )
             }else{
                 fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
