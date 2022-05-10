@@ -126,26 +126,17 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             
             let fileRead =  ''
             if(path.split('/').length >1){
-                console.log('with directory')
-                fileRead = path.split('/')[0]== ''? fs.readFileSync(path.substr(1), 'utf8').toString()  : fs.readFileSync(path, 'utf8').toString()  
-                console.log('object with directory: ',fileRead )
+                fileRead = path.split('/')[0]== ''? fs.readFileSync(path.substr(1), 'utf8').toString()  : fs.readFileSync(path, 'utf8').toString()
             }else{
                 fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
-                console.log('object without directory: ',fileRead )
             }
-            
-            console.log("modifyVersionAndUploadFile fileRead:", fileRead)
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
-            console.log("modifyVersionAndUploadFile newVersion:", newVersion)
             fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
-            console.log("modifyVersionAndUploadFile fileRead:", fileRead)
             let fileBase64 = base64.encode(fileRead)
-            console.log("modifyVersionAndUploadFile fileBase64:", fileBase64)
-            console.log("modifyVersionAndUploadFile path:", path)
             await uploadGithub(fileBase64, path, sha)
         }catch(error){
-            console.log('Failed to update package.json version!',error)
+            core.setFailed('Failed to update package.json version!',error)
         }
     }else{
         core.setFailed('Failed to read file!')
@@ -163,16 +154,11 @@ async function uploadGithub(content, fileName, sha){
     if(sha != null)
         param['sha'] = sha
 
-        console.log('log uploadFileBase64 param:',param)
-        console.log('log uploadFileBase64 content:',content)
-        console.log('log uploadFileBase64 fileName:',fileName)
-        console.log('log uploadFileBase64 sha:',sha)
     uploadFileBase64()
 }
 
 async function uploadFileBase64(){
     try{
-        console.log('log uploadFileBase64 param:',param)
         await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then(()=>{
             console.log({
                 'statusCode': 200,
