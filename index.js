@@ -147,13 +147,16 @@ async function uploadGithub(content, fileName, sha){
     if(sha != null)
         param['sha'] = sha
 
-    
+        console.log('log uploadFileBase64 param:',param)
+        console.log('log uploadFileBase64 content:',content)
+        console.log('log uploadFileBase64 fileName:',fileName)
+        console.log('log uploadFileBase64 sha:',sha)
     uploadFileBase64()
 }
 
 async function uploadFileBase64(){
     try{
-        
+        console.log('log uploadFileBase64 param:',param)
         await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', param).then(()=>{
             console.log({
                 'statusCode': 200,
