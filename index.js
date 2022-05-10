@@ -127,6 +127,7 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             if(path.split('/').length >1){
                 console.log('with directory')
                 dir = path.replace("package.json", "")
+                console.log('mapping: ', dir)
                 await exec(`cd ${dir}`)
                 console.log('mv to ', dir)
                 await exec("ls")
