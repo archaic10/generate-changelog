@@ -123,16 +123,16 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
             await exec("yarn cache clean")
             await exec("yarn install --ignore-workspace-root-check")
             await exec("ls")
-            let dir = ''
+            
+            let fileRead =  ''
             if(path.split('/').length >1){
                 console.log('with directory')
-                dir = path.replace("package.json", "")
-                console.log('mapping: ', dir)
-                await exec(`cd ${dir}`)
-                console.log('mv to ', dir)
-                await exec("ls")
+                fileRead = fs.readFileSync(path, 'utf8').toString()
+                console.log('object with directory: ',fileRead )
+            }else{
+                fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
+                console.log('object without directory: ',fileRead )
             }
-            let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
             console.log("modifyVersionAndUploadFile fileRead:", fileRead)
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
